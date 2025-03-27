@@ -70,7 +70,7 @@ const ordersWithItems = orders.map(order => ({
 
 const Orders = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
@@ -118,7 +118,7 @@ const Orders = () => {
         order.customer.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesStatus = 
-        statusFilter === '' || 
+        statusFilter === 'all' || 
         order.status === statusFilter;
       
       return matchesSearch && matchesStatus;
@@ -233,7 +233,7 @@ const Orders = () => {
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Statuses</SelectItem>
+                    <SelectItem value="all">All Statuses</SelectItem>
                     <SelectItem value="Delivered">Delivered</SelectItem>
                     <SelectItem value="Processing">Processing</SelectItem>
                     <SelectItem value="Shipped">Shipped</SelectItem>

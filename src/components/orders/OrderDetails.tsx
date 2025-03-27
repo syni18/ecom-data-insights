@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,8 @@ import { Separator } from '@/components/ui/separator';
 import { Clock, Package, Truck, CheckCircle, AlertCircle, User, MapPin, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { formatCurrency, formatLongDate } from '@/utils/formatters';
+import { Order } from '@/store/slices/ordersSlice';
 
 // Order status styles
 const statusStyles = {
@@ -40,7 +42,7 @@ const statusIcons = {
 interface OrderDetailsProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  order: any; // In a real app, this would be properly typed
+  order: Order | null; 
   onStatusChange: (orderId: string, newStatus: string) => void;
 }
 
@@ -53,6 +55,13 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
   const [status, setStatus] = useState(order?.status || 'Processing');
   const { toast } = useToast();
 
+  // Update local status when order changes
+  useEffect(() => {
+    if (order) {
+      setStatus(order.status);
+    }
+  }, [order]);
+
   if (!order) return null;
 
   const StatusIcon = statusIcons[status as keyof typeof statusIcons] || Package;
@@ -64,24 +73,6 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
       title: "Order status updated",
       description: `Order #${order.id} is now ${newStatus}`,
     });
-  };
-
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    };
-    return new Date(dateString).toLocaleDateString('en-US', options);
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
   };
 
   return (
@@ -100,7 +91,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
             </Badge>
           </DialogTitle>
           <DialogDescription>
-            Placed on {formatDate(order.date)}
+            Placed on {formatLongDate(order.date)}
           </DialogDescription>
         </DialogHeader>
 

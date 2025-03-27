@@ -44,13 +44,11 @@ const BulkActions: React.FC<BulkActionsProps> = ({
   const handleBulkShip = () => {
     onUpdateStatus(selectedOrders, 'Shipped');
     toast.success(`${selectedOrders.length} orders marked as shipped`);
-    onClearSelection();
   };
 
   const handleBulkDeliver = () => {
     onUpdateStatus(selectedOrders, 'Delivered');
     toast.success(`${selectedOrders.length} orders marked as delivered`);
-    onClearSelection();
   };
 
   const handleBulkExport = () => {
@@ -63,7 +61,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({
 
   return (
     <>
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-10 bg-background border rounded-lg shadow-lg p-3 flex items-center gap-2">
+      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-10 bg-background border rounded-lg shadow-lg p-3 flex items-center gap-2 animate-fade-in">
         <span className="bg-primary text-primary-foreground text-sm font-medium rounded-full h-6 min-w-6 flex items-center justify-center px-2 mr-1">
           {selectedOrders.length}
         </span>

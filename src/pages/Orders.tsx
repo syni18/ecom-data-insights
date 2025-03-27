@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import {
   Card,
@@ -31,8 +31,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { orders } from '@/utils/mockData';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { SkeletonCard } from '@/components/ui/skeleton-card';
 import { 
   ArrowDownWideNarrow, 
   ArrowUpWideNarrow, 
@@ -46,9 +47,10 @@ import {
   Search, 
   SlidersHorizontal 
 } from 'lucide-react';
+import { useOrders } from '@/hooks/useOrders';
+import { formatCurrency, formatDate, debounce } from '@/utils/formatters';
 import OrderDetails from '@/components/orders/OrderDetails';
 import BulkActions from '@/components/orders/BulkActions';
-import { toast } from 'sonner';
 
 // Order status styles
 const statusStyles = {
@@ -58,128 +60,94 @@ const statusStyles = {
   Cancelled: "bg-red-100 text-red-800 border-red-200",
 };
 
-// Add items array to orders
-const ordersWithItems = orders.map(order => ({
-  ...order,
-  items: [
-    { name: "Product 1", quantity: 2, price: 29.99 },
-    { name: "Product 2", quantity: 1, price: 49.99 }
-  ],
-  email: `customer${Math.floor(Math.random() * 1000)}@example.com`
-}));
-
 const Orders = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [orderBy, setOrderBy] = useState<string>('date');
-  const [orderDirection, setOrderDirection] = useState<'asc' | 'desc'>('desc');
-  const [allOrdersData, setAllOrdersData] = useState(ordersWithItems);
+  const [localSearchTerm, setLocalSearchTerm] = useState('');
   
-  // Format date string
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
-  };
-  
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
+  const {
+    orders,
+    loading,
+    error,
+    selectedOrderIds,
+    orderBy,
+    orderDirection,
+    statusFilter,
+    handleStatusChange,
+    handleBulkStatusUpdate,
+    toggleSelectAll,
+    handleToggleSelectOrder,
+    handleSearchChange,
+    handleStatusFilterChange,
+    handleSortChange,
+    clearSelection,
+  } = useOrders();
 
-  // Sort function
-  const sortOrders = (a: any, b: any) => {
-    if (orderBy === 'date') {
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
-      return orderDirection === 'asc' ? dateA - dateB : dateB - dateA;
-    } else if (orderBy === 'amount') {
-      return orderDirection === 'asc' ? a.amount - b.amount : b.amount - a.amount;
-    } else {
-      const valueA = a[orderBy].toString().toLowerCase();
-      const valueB = b[orderBy].toString().toLowerCase();
-      return orderDirection === 'asc' 
-        ? valueA.localeCompare(valueB) 
-        : valueB.localeCompare(valueA);
-    }
-  };
-  
-  // Filter orders
-  const filteredOrders = useMemo(() => {
-    return allOrdersData.filter(order => {
-      const matchesSearch = 
-        order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.customer.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesStatus = 
-        statusFilter === 'all' || 
-        order.status === statusFilter;
-      
-      return matchesSearch && matchesStatus;
-    }).sort(sortOrders);
-  }, [allOrdersData, searchTerm, statusFilter, orderBy, orderDirection]);
-
-  // Toggle sorting
-  const toggleSort = (field: string) => {
-    if (orderBy === field) {
-      setOrderDirection(orderDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setOrderBy(field);
-      setOrderDirection('asc');
-    }
-  };
-
-  // Handle status change
-  const handleStatusChange = (orderId: string, newStatus: string) => {
-    setAllOrdersData(prev => 
-      prev.map(order => 
-        order.id === orderId 
-          ? { ...order, status: newStatus } 
-          : order
-      )
-    );
-  };
-
-  // Handle bulk status update
-  const handleBulkStatusUpdate = (orderIds: string[], newStatus: string) => {
-    setAllOrdersData(prev => 
-      prev.map(order => 
-        orderIds.includes(order.id) 
-          ? { ...order, status: newStatus } 
-          : order
-      )
-    );
-  };
-
-  // Toggle select all
-  const toggleSelectAll = () => {
-    if (selectedOrderIds.length === filteredOrders.length) {
-      setSelectedOrderIds([]);
-    } else {
-      setSelectedOrderIds(filteredOrders.map(order => order.id));
-    }
-  };
-
-  // Toggle select single order
-  const toggleSelectOrder = (orderId: string) => {
-    if (selectedOrderIds.includes(orderId)) {
-      setSelectedOrderIds(selectedOrderIds.filter(id => id !== orderId));
-    } else {
-      setSelectedOrderIds([...selectedOrderIds, orderId]);
-    }
-  };
+  // Debounce search input
+  useEffect(() => {
+    const debouncedSearch = debounce((term: string) => {
+      handleSearchChange(term);
+    }, 300);
+    
+    debouncedSearch(localSearchTerm);
+    
+    return () => {
+      // Clean up any pending debounce
+    };
+  }, [localSearchTerm]);
 
   // View order details
   const viewOrderDetails = (order: any) => {
     setSelectedOrder(order);
     setIsDetailsOpen(true);
   };
+  
+  // Handle error display
+  useEffect(() => {
+    if (error) {
+      toast.error("Failed to load orders", {
+        description: error,
+      });
+    }
+  }, [error]);
+
+  // Render skeletons while loading
+  if (loading) {
+    return (
+      <PageContainer>
+        <div className="page-container">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Orders</h1>
+              <p className="text-muted-foreground mt-1">
+                Manage and track all your customer orders
+              </p>
+            </div>
+          </div>
+          
+          <Card className="mb-8">
+            <CardContent className="p-6">
+              <div className="grid gap-4 md:grid-cols-[1fr_auto_auto_auto]">
+                {/* Skeleton filters */}
+                <div><Skeleton className="h-10 w-full" /></div>
+                <div><Skeleton className="h-10 w-[180px]" /></div>
+                <div><Skeleton className="h-10 w-20" /></div>
+                <div><Skeleton className="h-10 w-36" /></div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        </div>
+      </PageContainer>
+    );
+  }
   
   return (
     <PageContainer>
@@ -222,13 +190,13 @@ const Orders = () => {
                 <Input
                   placeholder="Search orders or customers..."
                   className="pl-8"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={localSearchTerm}
+                  onChange={(e) => setLocalSearchTerm(e.target.value)}
                 />
               </div>
               
               <div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
@@ -277,7 +245,7 @@ const Orders = () => {
             <CardTitle className="flex items-center gap-2">
               <span>All Orders</span>
               <span className="text-sm font-normal text-muted-foreground">
-                ({filteredOrders.length} orders found)
+                ({orders.length} orders found)
               </span>
             </CardTitle>
           </CardHeader>
@@ -290,14 +258,14 @@ const Orders = () => {
                       <TableHead className="w-12">
                         <Checkbox
                           checked={
-                            filteredOrders.length > 0 && 
-                            selectedOrderIds.length === filteredOrders.length
+                            orders.length > 0 && 
+                            selectedOrderIds.length === orders.length
                           }
                           onCheckedChange={toggleSelectAll}
                           aria-label="Select all orders"
                         />
                       </TableHead>
-                      <TableHead className="cursor-pointer" onClick={() => toggleSort('id')}>
+                      <TableHead className="cursor-pointer" onClick={() => handleSortChange('id')}>
                         <div className="flex items-center gap-1">
                           Order ID
                           {orderBy === 'id' && (
@@ -307,7 +275,7 @@ const Orders = () => {
                           )}
                         </div>
                       </TableHead>
-                      <TableHead className="cursor-pointer" onClick={() => toggleSort('customer')}>
+                      <TableHead className="cursor-pointer" onClick={() => handleSortChange('customer')}>
                         <div className="flex items-center gap-1">
                           Customer
                           {orderBy === 'customer' && (
@@ -317,7 +285,7 @@ const Orders = () => {
                           )}
                         </div>
                       </TableHead>
-                      <TableHead className="cursor-pointer" onClick={() => toggleSort('date')}>
+                      <TableHead className="cursor-pointer" onClick={() => handleSortChange('date')}>
                         <div className="flex items-center gap-1">
                           Date
                           {orderBy === 'date' && (
@@ -327,7 +295,7 @@ const Orders = () => {
                           )}
                         </div>
                       </TableHead>
-                      <TableHead className="cursor-pointer" onClick={() => toggleSort('amount')}>
+                      <TableHead className="cursor-pointer" onClick={() => handleSortChange('amount')}>
                         <div className="flex items-center gap-1">
                           Amount
                           {orderBy === 'amount' && (
@@ -337,7 +305,7 @@ const Orders = () => {
                           )}
                         </div>
                       </TableHead>
-                      <TableHead className="cursor-pointer" onClick={() => toggleSort('status')}>
+                      <TableHead className="cursor-pointer" onClick={() => handleSortChange('status')}>
                         <div className="flex items-center gap-1">
                           Status
                           {orderBy === 'status' && (
@@ -351,12 +319,12 @@ const Orders = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredOrders.map((order) => (
+                    {orders.map((order) => (
                       <TableRow key={order.id} className="animate-fade-in">
                         <TableCell>
                           <Checkbox
                             checked={selectedOrderIds.includes(order.id)}
-                            onCheckedChange={() => toggleSelectOrder(order.id)}
+                            onCheckedChange={() => handleToggleSelectOrder(order.id)}
                             aria-label={`Select order ${order.id}`}
                           />
                         </TableCell>
@@ -402,7 +370,7 @@ const Orders = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredOrders.map((order) => (
+                {orders.map((order) => (
                   <Card key={order.id} className="overflow-hidden">
                     <CardHeader className="p-4 flex flex-row items-start justify-between space-y-0">
                       <div>
@@ -416,7 +384,7 @@ const Orders = () => {
                       </div>
                       <Checkbox
                         checked={selectedOrderIds.includes(order.id)}
-                        onCheckedChange={() => toggleSelectOrder(order.id)}
+                        onCheckedChange={() => handleToggleSelectOrder(order.id)}
                         aria-label={`Select order ${order.id}`}
                       />
                     </CardHeader>
@@ -463,7 +431,7 @@ const Orders = () => {
         {/* Bulk Actions Bar */}
         <BulkActions 
           selectedOrders={selectedOrderIds}
-          onClearSelection={() => setSelectedOrderIds([])}
+          onClearSelection={clearSelection}
           onUpdateStatus={handleBulkStatusUpdate}
         />
       </div>

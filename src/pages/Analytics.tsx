@@ -1,3 +1,4 @@
+
 import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import {
@@ -167,7 +168,6 @@ const Analytics = () => {
                         nameKey="name"
                         animationDuration={800}
                         stroke="hsl(var(--background))"
-                        strokeWidth={2}
                       >
                         <ChartTooltip
                           content={

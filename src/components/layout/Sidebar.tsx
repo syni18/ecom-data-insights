@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -23,7 +24,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const navItems = [
     { path: '/', label: 'Dashboard', icon: Home },
-    { path: '/orders', label: 'Orders', icon: ShoppingCart },
+    { path: '/orders', label: 'Orders', icon: ShoppingCart, highlight: true },
     { path: '/inventory', label: 'Inventory', icon: Package },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/customers', label: 'Customers', icon: Users },
@@ -33,17 +34,26 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     { path: '/settings', label: 'Settings', icon: Settings },
     { path: '/help', label: 'Help', icon: HelpCircle },
   ];
+  
+  const handleBottomNavClick = (path: string, label: string) => {
+    if (path === '/settings' || path === '/help') {
+      toast.info(`${label} section is coming soon!`);
+    }
+  };
 
   return (
     <aside className={cn(
       "h-screen border-r bg-card flex flex-col fixed left-0 top-0 z-30 transition-all duration-300 ease-in-out",
       collapsed ? "w-20" : "w-64"
     )}>
-      <div className="flex items-center justify-end h-16 px-4 border-b">
+      <div className="flex items-center justify-between h-16 px-4 border-b">
+        {!collapsed && (
+          <span className="font-bold text-lg">E-Commerce</span>
+        )}
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8"
+          className={cn("h-8 w-8", collapsed && "ml-auto")}
           onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
@@ -59,6 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
               className={({ isActive }) => cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground",
                 isActive ? "bg-secondary text-foreground" : "hover:bg-secondary/50",
+                item.highlight && !isActive ? "text-primary hover:text-primary" : "",
                 collapsed && "justify-center py-3"
               )}
             >
@@ -74,6 +85,12 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={(e) => {
+                  if (item.path === '/settings' || item.path === '/help') {
+                    e.preventDefault();
+                    handleBottomNavClick(item.path, item.label);
+                  }
+                }}
                 className={({ isActive }) => cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground",
                   isActive ? "bg-secondary text-foreground" : "hover:bg-secondary/50",

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import {
@@ -32,9 +31,11 @@ import {
   Radar,
   PolarGrid,
   PolarAngleAxis,
-  PolarRadiusAxis
+  PolarRadiusAxis,
+  Treemap
 } from 'recharts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
 const Analytics = () => {
   // Format currency
@@ -146,32 +147,37 @@ const Analytics = () => {
                 </CardHeader>
                 <CardContent>
                   <div style={{ height: 300 }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={categorySalesData}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={true}
-                          label={renderCustomizedLabel}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                        >
-                          {categorySalesData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip
-                          formatter={(value) => [`${value}%`, 'Percentage']}
-                          contentStyle={{
-                            backgroundColor: 'hsl(var(--card))',
-                            border: '1px solid hsl(var(--border))',
-                            borderRadius: '8px'
-                          }}
+                    <ChartContainer
+                      config={{
+                        category1: { theme: { light: '#0088FE', dark: '#0088FE' } },
+                        category2: { theme: { light: '#00C49F', dark: '#00C49F' } },
+                        category3: { theme: { light: '#FFBB28', dark: '#FFBB28' } },
+                        category4: { theme: { light: '#FF8042', dark: '#FF8042' } },
+                        category5: { theme: { light: '#A668FF', dark: '#A668FF' } },
+                        category6: { theme: { light: '#41D9BD', dark: '#41D9BD' } },
+                      }}
+                    >
+                      <Treemap
+                        data={categorySalesData.map(item => ({
+                          name: item.name,
+                          size: item.value,
+                          fill: COLORS[categorySalesData.findIndex(d => d.name === item.name) % COLORS.length]
+                        }))}
+                        dataKey="size"
+                        nameKey="name"
+                        animationDuration={800}
+                        stroke="hsl(var(--background))"
+                        strokeWidth={2}
+                      >
+                        <ChartTooltip
+                          content={
+                            <ChartTooltipContent 
+                              formatter={(value, name) => [`${value}%`, name as string]}
+                            />
+                          }
                         />
-                      </PieChart>
-                    </ResponsiveContainer>
+                      </Treemap>
+                    </ChartContainer>
                   </div>
                 </CardContent>
               </Card>

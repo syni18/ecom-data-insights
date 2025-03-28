@@ -1,5 +1,6 @@
+
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getMockOrders } from '@/utils/mockData';
+import { orders } from '@/utils/mockData';
 
 // Define the Order type
 export interface Order {
@@ -34,7 +35,7 @@ export const fetchOrders = createAsyncThunk('orders/fetchOrders', async () => {
   // Simulate API call with timeout
   return new Promise<Order[]>((resolve) => {
     setTimeout(() => {
-      resolve(getMockOrders());
+      resolve(orders);
     }, 1000);
   });
 });

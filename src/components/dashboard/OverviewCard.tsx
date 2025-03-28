@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { LucideIcon } from 'lucide-react';
 
+//Define the overview card data model
 interface OverviewCardProps {
   title: string;
   value: string | number;

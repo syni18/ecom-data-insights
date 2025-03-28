@@ -1,5 +1,7 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { fetchProducts } from '@/store/slices/productsSlice';
 import PageContainer from '@/components/layout/PageContainer';
 import {
   Card,
@@ -24,10 +26,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { products } from '@/utils/mockData';
 import { cn } from '@/lib/utils';
 import { Filter, PackagePlus, PlusCircle, Search } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
 
 // Stock status styles
 const statusStyles = {
@@ -37,9 +40,23 @@ const statusStyles = {
 };
 
 const Inventory = () => {
+  const dispatch = useDispatch();
+  const { items: products, loading, error } = useSelector((state: RootState) => state.products);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error("Failed to load products", {
+        description: error,
+      });
+    }
+  }, [error]);
   
   // Format currency
   const formatCurrency = (amount: number) => {
@@ -81,6 +98,58 @@ const Inventory = () => {
   
   // Get unique categories for filter
   const categories = [...new Set(products.map(product => product.category))];
+
+  if (loading) {
+    return (
+      <PageContainer>
+        <div className="page-container">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <div>
+              <Skeleton className="h-8 w-32" />
+              <Skeleton className="h-4 w-48 mt-2" />
+            </div>
+            <Skeleton className="h-10 w-32 mt-4 md:mt-0" />
+          </div>
+          
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i} className="hover-scale card-transition">
+                <CardContent className="p-6">
+                  <Skeleton className="h-4 w-24 mb-2" />
+                  <Skeleton className="h-8 w-16" />
+                  <Skeleton className="h-3 w-32 mt-2" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <Card className="mb-8">
+            <CardContent className="p-6">
+              <div className="grid gap-4 md:grid-cols-3">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-10 w-full" />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between py-4">
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-4 w-24" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Skeleton key={i} className="h-12 w-full" />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </PageContainer>
+    );
+  }
   
   return (
     <PageContainer>
@@ -210,7 +279,7 @@ const Inventory = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProducts.map((product) => (
+                {filteredProducts.map(product => (
                   <TableRow key={product.id} className="animate-fade-in">
                     <TableCell className="font-medium">{product.name}</TableCell>
                     <TableCell>{product.category}</TableCell>

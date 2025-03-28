@@ -1,87 +1,87 @@
 
 // Products data
-export const products = [
-  { 
-    id: 1, 
-    name: "Premium Wireless Headphones", 
-    category: "Electronics", 
-    price: 299.99, 
-    stockLevel: 142, 
-    status: "In Stock"
-  },
-  { 
-    id: 2, 
-    name: "Ultra HD Smart TV 55\"", 
-    category: "Electronics", 
-    price: 899.99, 
-    stockLevel: 28, 
-    status: "In Stock"
-  },
-  { 
-    id: 3, 
-    name: "Designer Watch - Limited Edition", 
-    category: "Accessories", 
-    price: 459.99, 
-    stockLevel: 13, 
-    status: "Low Stock"
-  },
-  { 
-    id: 4, 
-    name: "Professional Blender", 
-    category: "Home & Kitchen", 
-    price: 179.99, 
-    stockLevel: 56, 
-    status: "In Stock"
-  },
-  { 
-    id: 5, 
-    name: "Ergonomic Office Chair", 
-    category: "Furniture", 
-    price: 249.99, 
-    stockLevel: 37, 
-    status: "In Stock"
-  },
-  { 
-    id: 6, 
-    name: "Luxury Fountain Pen", 
-    category: "Office Supplies", 
-    price: 89.99, 
-    stockLevel: 8, 
-    status: "Low Stock"
-  },
-  { 
-    id: 7, 
-    name: "Smartphone - Latest Model", 
-    category: "Electronics", 
-    price: 999.99, 
-    stockLevel: 92, 
-    status: "In Stock"
-  },
-  { 
-    id: 8, 
-    name: "Wireless Charging Pad", 
-    category: "Electronics", 
-    price: 49.99, 
-    stockLevel: 5, 
-    status: "Low Stock"
-  },
-  { 
-    id: 9, 
-    name: "Fitness Tracker", 
-    category: "Wearables", 
-    price: 129.99, 
-    stockLevel: 67, 
-    status: "In Stock"
-  },
-  { 
-    id: 10, 
-    name: "Premium Coffee Maker", 
-    category: "Home & Kitchen", 
-    price: 199.99, 
-    stockLevel: 0, 
-    status: "Out of Stock"
-  },
-];
+// export const products = [
+//   { 
+//     id: 1, 
+//     name: "Premium Wireless Headphones", 
+//     category: "Electronics", 
+//     price: 299.99, 
+//     stockLevel: 142, 
+//     status: "In Stock"
+//   },
+//   { 
+//     id: 2, 
+//     name: "Ultra HD Smart TV 55\"", 
+//     category: "Electronics", 
+//     price: 899.99, 
+//     stockLevel: 28, 
+//     status: "In Stock"
+//   },
+//   { 
+//     id: 3, 
+//     name: "Designer Watch - Limited Edition", 
+//     category: "Accessories", 
+//     price: 459.99, 
+//     stockLevel: 13, 
+//     status: "Low Stock"
+//   },
+//   { 
+//     id: 4, 
+//     name: "Professional Blender", 
+//     category: "Home & Kitchen", 
+//     price: 179.99, 
+//     stockLevel: 56, 
+//     status: "In Stock"
+//   },
+//   { 
+//     id: 5, 
+//     name: "Ergonomic Office Chair", 
+//     category: "Furniture", 
+//     price: 249.99, 
+//     stockLevel: 37, 
+//     status: "In Stock"
+//   },
+//   { 
+//     id: 6, 
+//     name: "Luxury Fountain Pen", 
+//     category: "Office Supplies", 
+//     price: 89.99, 
+//     stockLevel: 8, 
+//     status: "Low Stock"
+//   },
+//   { 
+//     id: 7, 
+//     name: "Smartphone - Latest Model", 
+//     category: "Electronics", 
+//     price: 999.99, 
+//     stockLevel: 92, 
+//     status: "In Stock"
+//   },
+//   { 
+//     id: 8, 
+//     name: "Wireless Charging Pad", 
+//     category: "Electronics", 
+//     price: 49.99, 
+//     stockLevel: 5, 
+//     status: "Low Stock"
+//   },
+//   { 
+//     id: 9, 
+//     name: "Fitness Tracker", 
+//     category: "Wearables", 
+//     price: 129.99, 
+//     stockLevel: 67, 
+//     status: "In Stock"
+//   },
+//   { 
+//     id: 10, 
+//     name: "Premium Coffee Maker", 
+//     category: "Home & Kitchen", 
+//     price: 199.99, 
+//     stockLevel: 0, 
+//     status: "Out of Stock"
+//   },
+// ];
 
 // Orders data
 export const orders = [

@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { useTheme } from 'next-themes';
 
 const Navbar = () => {
+  // State define to toggle theme of the complete website
   const { theme, setTheme } = useTheme();
 
   return (

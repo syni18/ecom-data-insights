@@ -1,69 +1,97 @@
-# Welcome to your Lovable project
+# E-commerce Data Insights Dashboard
 
-## Project info
+A Modular, responsive dashboard for visualizing and analyzing e-commerce data, built with React, TypeScript, and Tailwind CSS.
 
-**URL**: https://lovable.dev/projects/c477ae84-e7a4-44bf-951a-4c5bcc0e176a
+## Source Code
 
-## How can I edit this code?
+### GitHub Repository
+[View on GitHub](https://github.com/syni18/ecom-data-insights.git)
 
-There are several ways of editing your application.
+### Setup Instructions
 
-**Use Lovable**
+1. Clone the repository:
+```bash
+git clone https://github.com/syni18/ecom-data-insights.git
+cd ecom-data-insights
+```
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c477ae84-e7a4-44bf-951a-4c5bcc0e176a) and start prompting.
+2. Install dependencies:
+```bash
+npm install
+```
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Architecture Decisions
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+This project follows a modern React application architecture:
 
-**Use GitHub Codespaces**
+- **Frontend Framework**: React 18 with TypeScript
+- **State Management**: Redux Toolkit for global state
+- **Data Fetching**: React Query for server state management
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **Build Tool**: Vite for fast development and optimized builds
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## What technologies are used for this project?
+### Performance Optimization
 
-This project is built with .
+- Implemented code splitting using React.lazy()
+- Used React.memo() for expensive components
+- Implemented limit for large lists
+- Optimized icons and assets
+- Used proper caching strategies with React Query
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Demo
 
-## How can I deploy this project?
+### Deployed Application
 
-Simply open [Lovable](https://lovable.dev/projects/c477ae84-e7a4-44bf-951a-4c5bcc0e176a) and click on Share -> Publish.
+[View Live Demo](https://endearing-kelpie-290741.netlify.app/)
 
-## I want to use a custom domain - is that possible?
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+
+### Test Data Setup
+1. Clone the repository
+2. Run the development server
+3. In application there is already added Some Static Data [mockData.ts]
+
+
+## Documentation
+
+### Component Documentation
+  -  Building each Component Modular, Beacause it is easy to debug, Reuseable and Easy to readable.
+  -  A reusable components like - Buttons, Cards , toast, icons, forms , inputbox, etc
+### Redux Store Documentation
+
+The application uses Redux Toolkit for state management with the following structure:
+- Uses to Pass the data to anywhere in the application.
+- this help to reduce the over fetching data everywhere , do it once and store in Redux store and use it.
+
+Key slices:
+- `products`: Products Array state
+- `orders`: displaying orders and Modify
+
+### API Integration Details
+
+The application integrates with the following APIs:
+
+1. **Mockapi.io API**
+   - Base URL: `https://<your-token>.mockapi.io/:endpoint`
+   - Endpoints: Products
+
+### Known Issues and Future Improvements
+
+#### Known Issues
+1. Performance lag when loading large datasets
+2. Mobile responsiveness issues in certain views
+3. Browser compatibility issues with older versions
+
+#### Future Improvements
+1. Implement real-time data updates
+2. Enhance mobile responsiveness
+3. Add export functionality for reports
+4. Implement user roles and permissions
+5. Add more customization options for dashboards
+

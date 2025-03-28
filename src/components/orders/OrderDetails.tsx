@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -22,9 +21,7 @@ import { Clock, Package, Truck, CheckCircle, AlertCircle, User, MapPin, CreditCa
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { formatCurrency, formatLongDate } from '@/utils/formatters';
-import { Order } from '@/store/slices/ordersSlice';
 
-// Order status styles
 const statusStyles = {
   Delivered: "bg-green-100 text-green-800 border-green-200",
   Processing: "bg-blue-100 text-blue-800 border-blue-200",
@@ -42,7 +39,7 @@ const statusIcons = {
 interface OrderDetailsProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  order: Order | null; 
+  order: any | null; 
   onStatusChange: (orderId: string, newStatus: string) => void;
 }
 
@@ -55,7 +52,6 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
   const [status, setStatus] = useState(order?.status || 'Processing');
   const { toast } = useToast();
 
-  // Update local status when order changes
   useEffect(() => {
     if (order) {
       setStatus(order.status);
@@ -102,7 +98,9 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
                 <User className="h-4 w-4" /> Customer
               </div>
               <p>{order.customer}</p>
-              <p className="text-sm text-muted-foreground">{order.email || 'customer@example.com'}</p>
+              <p className="text-sm text-muted-foreground">
+                {order.email ? order.email : 'customer@example.com'}
+              </p>
             </div>
             <div className="col-span-4 sm:col-span-2">
               <div className="font-medium mb-2 flex items-center gap-1">

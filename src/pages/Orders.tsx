@@ -52,7 +52,6 @@ import { formatCurrency, formatDate, debounce } from '@/utils/formatters';
 import OrderDetails from '@/components/orders/OrderDetails';
 import BulkActions from '@/components/orders/BulkActions';
 
-// Order status styles
 const statusStyles = {
   Delivered: "bg-green-100 text-green-800 border-green-200",
   Processing: "bg-blue-100 text-blue-800 border-blue-200",
@@ -84,7 +83,6 @@ const Orders = () => {
     clearSelection,
   } = useOrders();
 
-  // Debounce search input
   useEffect(() => {
     const debouncedSearch = debounce((term: string) => {
       handleSearchChange(term);
@@ -97,13 +95,11 @@ const Orders = () => {
     };
   }, [localSearchTerm]);
 
-  // View order details
   const viewOrderDetails = (order: any) => {
     setSelectedOrder(order);
     setIsDetailsOpen(true);
   };
   
-  // Handle error display
   useEffect(() => {
     if (error) {
       toast.error("Failed to load orders", {
@@ -112,7 +108,6 @@ const Orders = () => {
     }
   }, [error]);
 
-  // Render skeletons while loading
   if (loading) {
     return (
       <PageContainer>
@@ -129,7 +124,6 @@ const Orders = () => {
           <Card className="mb-8">
             <CardContent className="p-6">
               <div className="grid gap-4 md:grid-cols-[1fr_auto_auto_auto]">
-                {/* Skeleton filters */}
                 <div><Skeleton className="h-10 w-full" /></div>
                 <div><Skeleton className="h-10 w-[180px]" /></div>
                 <div><Skeleton className="h-10 w-20" /></div>
@@ -152,7 +146,6 @@ const Orders = () => {
   return (
     <PageContainer>
       <div className="page-container relative">
-        {/* Page Title */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Orders</h1>
@@ -181,7 +174,6 @@ const Orders = () => {
           </div>
         </div>
         
-        {/* Filters */}
         <Card className="mb-8">
           <CardContent className="p-6">
             <div className="grid gap-4 md:grid-cols-[1fr_auto_auto_auto]">
@@ -239,7 +231,6 @@ const Orders = () => {
           </CardContent>
         </Card>
         
-        {/* Orders Table/Grid */}
         <Card className="hover-scale card-transition">
           <CardHeader className="flex flex-row items-center justify-between py-4">
             <CardTitle className="flex items-center gap-2">
@@ -420,7 +411,6 @@ const Orders = () => {
           </CardContent>
         </Card>
 
-        {/* Order Details Dialog */}
         <OrderDetails 
           open={isDetailsOpen} 
           onOpenChange={setIsDetailsOpen}
@@ -428,7 +418,6 @@ const Orders = () => {
           onStatusChange={handleStatusChange}
         />
 
-        {/* Bulk Actions Bar */}
         <BulkActions 
           selectedOrders={selectedOrderIds}
           onClearSelection={clearSelection}
